@@ -7,6 +7,7 @@ from app.dependencies.database import get_db
 
 from app.schemas.auth import RegisterResponse
 from app.schemas.auth import UserRegisterRequest
+from app.schemas.auth import RefreshTokenRequest
 
 from app.schemas.login import LoginRequest
 from app.schemas.login import TokenResponse
@@ -43,17 +44,57 @@ def login(
 ):
     service = AuthService(db)
 
-    token = service.login(
+    tokens = service.login(
         request.email,
         request.password,
     )
 
-    if token is None:
+    if tokens is None:
         raise HTTPException(
             status_code=401,
             detail="Invalid email or password",
         )
 
     return TokenResponse(
-        access_token=token,
+        access_token=tokens["access_token"],
+        refresh_token=tokens["refresh_token"],
     )
+
+
+@router.post(
+    "/refresh",
+    response_model=TokenResponse,
+)
+def refresh(
+    request: RefreshTokenRequest,
+    db: Session = Depends(get_db),
+):
+    service = AuthService(db)
+
+    tokens = service.refresh(request.refresh_token)
+
+    if tokens is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or expired refresh token",
+        )
+
+    return TokenResponse(
+        access_token=tokens["access_token"],
+        refresh_token=tokens["refresh_token"],
+    )
+
+
+@router.post(
+    "/logout",
+    status_code=204,
+)
+def logout(
+    request: RefreshTokenRequest,
+    db: Session = Depends(get_db),
+):
+    service = AuthService(db)
+
+    service.logout(request.refresh_token)
+
+    return None

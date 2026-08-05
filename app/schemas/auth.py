@@ -24,3 +24,23 @@ class UserRegisterRequest(BaseModel):
 
 class RegisterResponse(UserResponse):
     pass
+
+
+class ChangePasswordRequest(BaseModel):
+
+    current_password: str = Field(
+        min_length=8,
+        max_length=128,
+        examples=["OldPassword@123"],
+    )
+
+    new_password: str = Field(
+        min_length=8,
+        max_length=128,
+        examples=["NewPassword@123"],
+    )
+
+
+class RefreshTokenRequest(BaseModel):
+
+    refresh_token: str

@@ -13,3 +13,15 @@ class UserResponse(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class UserUpdateRequest(BaseModel):
+    full_name: str | None = None
+    email: EmailStr | None = None
+
+    class Config:
+        extra = "forbid"
+
+
+class MessageResponse(BaseModel):
+    message: str
