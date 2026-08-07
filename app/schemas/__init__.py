@@ -7,6 +7,9 @@ from .user import UserUpdateRequest
 from .user import MessageResponse
 from .login import LoginRequest
 from .login import TokenResponse
+from .resume import ResumeResponse
+from .resume import ResumeUploadResponse
+from .resume import ResumeListResponse
 
 __all__ = [
     "UserRegisterRequest",
@@ -18,4 +21,7 @@ __all__ = [
     "MessageResponse",
     "LoginRequest",
     "TokenResponse",
+    "ResumeResponse",
+    "ResumeUploadResponse",
+    "ResumeListResponse",
 ]

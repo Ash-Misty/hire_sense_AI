@@ -18,8 +18,25 @@
 - [x] 14. Apply migration to database (`alembic upgrade head`)
 - [x] 15. Verify routers in `app/main.py`
 
+## Round 2: Module 5 (Resume Upload)
+
+- [x] 1. Add upload settings to `app/core/config.py` (`MAX_UPLOAD_SIZE_MB`, `UPLOAD_DIR`)
+- [x] 2. Create `app/models/resume.py` (Resume model)
+- [x] 3. Register model in `app/models/__init__.py`
+- [x] 4. Create `app/schemas/resume.py` (ResumeResponse, ResumeUploadResponse, ResumeListResponse)
+- [x] 5. Register schemas in `app/schemas/__init__.py`
+- [x] 6. Create `app/utils/file_handler.py` (secure file save + validation)
+- [x] 7. Create `app/repositories/resume_repository.py`
+- [x] 8. Create `app/services/resume_service.py`
+- [x] 9. Create `app/api/v1/resume.py` (POST /resume/upload, GET /resume, DELETE /resume/{id})
+- [x] 10. Register router in `app/api/v1/__init__.py`
+- [x] 11. Register router in `app/main.py`
+- [x] 12. Create Alembic migration for `resumes` table
+- [x] 13. Apply migration to database (`alembic upgrade head`)
+- [x] 14. Install `python-multipart` and add to `requirements.txt`
+- [x] 15. Verify app startup
+
 ## Future Rounds (not yet started)
-- [ ] Module 5: Resume Upload
 - [ ] Module 6: Resume Parser (AI)
 - [ ] Module 7: Skill Extraction
 - [ ] Module 8: ATS Score Engine
