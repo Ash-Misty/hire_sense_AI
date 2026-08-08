@@ -22,6 +22,10 @@ class Settings(BaseSettings):
     MAX_UPLOAD_SIZE_MB: int = 5
     UPLOAD_DIR: str = "uploads"
 
+    # Resume parser settings
+    PARSER_DEFAULT_SECTION_GAP_LINES: int = 3
+    MAX_RESUME_TEXT_CHARS: int = 50000
+
     model_config = SettingsConfigDict(
         env_file=".env",
         extra="ignore"

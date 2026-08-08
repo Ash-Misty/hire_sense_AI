@@ -36,8 +36,28 @@
 - [x] 14. Install `python-multipart` and add to `requirements.txt`
 - [x] 15. Verify app startup
 
+## Round 3: Module 6 (Resume Parser - AI)
+
+- [x] 1. Add `pypdf` and `python-docx` to `requirements.txt`
+- [x] 2. Create `app/utils/pdf_parser.py` (PDF text extraction)
+- [x] 3. Create `app/utils/docx_parser.py` (DOCX text extraction)
+- [x] 4. Create `app/utils/resume_section_parser.py` (section detection + regex extraction)
+- [x] 5. Create `app/utils/skill_dictionary.py` (configurable skill dictionary)
+- [x] 6. Create `app/models/parsed_resume.py` (ParsedResume model)
+- [x] 7. Register model in `app/models/__init__.py`
+- [x] 8. Create `app/schemas/parsed_resume.py` (Pydantic schemas)
+- [x] 9. Register schemas in `app/schemas/__init__.py`
+- [x] 10. Create `app/repositories/parsed_resume_repository.py`
+- [x] 11. Create `app/services/resume_parser_service.py` (orchestrator)
+- [x] 12. Update `app/api/v1/resume.py` (POST /resume/parse/{resume_id}, GET /resume/parse/{resume_id})
+- [x] 13. Create Alembic migration for `parsed_resumes` table
+- [x] 14. Apply migration to database (`alembic upgrade head`)
+- [x] 15. Install dependencies (`pip install pypdf python-docx`)
+- [x] 16. Verify app startup
+- [x] 17. Update `TODO.md` (mark Module 6 complete)
+- [x] 18. Create `MODULE6.md` task tracker
+
 ## Future Rounds (not yet started)
-- [ ] Module 6: Resume Parser (AI)
 - [ ] Module 7: Skill Extraction
 - [ ] Module 8: ATS Score Engine
 - [ ] Module 9: Job Description Matching
@@ -48,3 +68,4 @@
 - [ ] Module 14: Docker
 - [ ] Module 15: Testing
 - [ ] Module 16: Deployment
+

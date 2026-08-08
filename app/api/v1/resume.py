@@ -8,8 +8,11 @@ from app.models.user import User
 from app.schemas.resume import ResumeListResponse
 from app.schemas.resume import ResumeResponse
 from app.schemas.resume import ResumeUploadResponse
+from app.schemas.parsed_resume import ParsedResumeResponse
+from app.schemas.parsed_resume import ResumeParseResponse
 from app.schemas.user import MessageResponse
 from app.services.resume_service import ResumeService
+from app.services.resume_parser_service import ResumeParserService
 
 router = APIRouter(
     prefix="/resume",
@@ -55,6 +58,64 @@ def list_my_resumes(
             )
             for r in resumes
         ]
+    )
+
+
+@router.post(
+    "/parse/{resume_id}",
+    response_model=ResumeParseResponse,
+    status_code=200,
+)
+def parse_resume(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = ResumeParserService(db)
+
+    record = service.parse_resume(current_user, resume_id)
+
+    return ResumeParseResponse(
+        message="Resume parsed successfully.",
+        resume_id=record.resume_id,
+        name=record.name,
+        email=record.email,
+        phone=record.phone,
+        skills=record.skills,
+        education=record.education,
+        experience=record.experience,
+        projects=record.projects,
+        certifications=record.certifications,
+    )
+
+
+@router.get(
+    "/parse/{resume_id}",
+    response_model=ParsedResumeResponse,
+    status_code=200,
+)
+def get_parsed_resume(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = ResumeParserService(db)
+
+    record = service.get_parsed_resume(current_user, resume_id)
+
+    return ParsedResumeResponse(
+        id=record.id,
+        resume_id=record.resume_id,
+        name=record.name,
+        email=record.email,
+        phone=record.phone,
+        summary=record.summary,
+        skills=record.skills,
+        education=record.education,
+        experience=record.experience,
+        projects=record.projects,
+        certifications=record.certifications,
+        parsed_at=record.parsed_at,
     )
 
 

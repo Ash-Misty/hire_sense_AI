@@ -10,6 +10,8 @@ from .login import TokenResponse
 from .resume import ResumeResponse
 from .resume import ResumeUploadResponse
 from .resume import ResumeListResponse
+from .parsed_resume import ResumeParseResponse
+from .parsed_resume import ParsedResumeResponse
 
 __all__ = [
     "UserRegisterRequest",
@@ -24,4 +26,6 @@ __all__ = [
     "ResumeResponse",
     "ResumeUploadResponse",
     "ResumeListResponse",
+    "ResumeParseResponse",
+    "ParsedResumeResponse",
 ]
