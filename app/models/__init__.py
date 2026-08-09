@@ -3,5 +3,13 @@ from .refresh_token import RefreshToken
 from .resume import Resume
 from .parsed_resume import ParsedResume
 from .extracted_skill import ExtractedSkill
+from .ats_score import AtsScore
 
-__all__ = ["User", "RefreshToken", "Resume", "ParsedResume", "ExtractedSkill"]
+__all__ = [
+    "User",
+    "RefreshToken",
+    "Resume",
+    "ParsedResume",
+    "ExtractedSkill",
+    "AtsScore",
+]

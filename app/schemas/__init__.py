@@ -16,6 +16,8 @@ from .extracted_skill import ExtractedSkillResponse
 from .extracted_skill import SkillExtractionResponse
 from .extracted_skill import SkillCategorySummary
 from .extracted_skill import SkillSummaryResponse
+from .ats_score import CategoryScore
+from .ats_score import AtsScoreResponse
 
 __all__ = [
     "UserRegisterRequest",
@@ -31,9 +33,11 @@ __all__ = [
     "ResumeUploadResponse",
     "ResumeListResponse",
     "ResumeParseResponse",
-    "ParsedResumeResponse",
+"ParsedResumeResponse",
     "ExtractedSkillResponse",
     "SkillExtractionResponse",
     "SkillCategorySummary",
     "SkillSummaryResponse",
+    "CategoryScore",
+    "AtsScoreResponse",
 ]

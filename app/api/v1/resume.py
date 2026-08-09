@@ -14,9 +14,11 @@ from app.schemas.user import MessageResponse
 from app.schemas.extracted_skill import SkillExtractionResponse
 from app.schemas.extracted_skill import SkillSummaryResponse
 from app.schemas.extracted_skill import SkillCategorySummary
+from app.schemas.ats_score import AtsScoreResponse
 from app.services.resume_service import ResumeService
 from app.services.resume_parser_service import ResumeParserService
 from app.services.skill_extraction_service import SkillExtractionService
+from app.services.ats_score_service import AtsScoreService
 
 router = APIRouter(
     prefix="/resume",
@@ -198,6 +200,56 @@ def get_skill_summary(
         resume_id=resume_id,
         total_skills=total_skills,
         categories=categories,
+    )
+
+
+@router.post(
+    "/{resume_id}/ats-score",
+    response_model=AtsScoreResponse,
+    status_code=200,
+)
+def compute_ats_score_endpoint(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = AtsScoreService(db)
+
+    record = service.compute_and_store(current_user, resume_id)
+
+    return AtsScoreResponse(
+        id=record.id,
+        resume_id=record.resume_id,
+        score=record.score,
+        category_scores=record.category_scores,
+        feedback=record.feedback,
+        score_breakdown=record.score_breakdown,
+        created_at=record.created_at,
+    )
+
+
+@router.get(
+    "/{resume_id}/ats-score",
+    response_model=AtsScoreResponse,
+    status_code=200,
+)
+def get_ats_score(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = AtsScoreService(db)
+
+    record = service.get_score(current_user, resume_id)
+
+    return AtsScoreResponse(
+        id=record.id,
+        resume_id=record.resume_id,
+        score=record.score,
+        category_scores=record.category_scores,
+        feedback=record.feedback,
+        score_breakdown=record.score_breakdown,
+        created_at=record.created_at,
     )
 
 
