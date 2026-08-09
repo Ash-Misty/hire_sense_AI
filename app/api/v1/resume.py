@@ -11,8 +11,12 @@ from app.schemas.resume import ResumeUploadResponse
 from app.schemas.parsed_resume import ParsedResumeResponse
 from app.schemas.parsed_resume import ResumeParseResponse
 from app.schemas.user import MessageResponse
+from app.schemas.extracted_skill import SkillExtractionResponse
+from app.schemas.extracted_skill import SkillSummaryResponse
+from app.schemas.extracted_skill import SkillCategorySummary
 from app.services.resume_service import ResumeService
 from app.services.resume_parser_service import ResumeParserService
+from app.services.skill_extraction_service import SkillExtractionService
 
 router = APIRouter(
     prefix="/resume",
@@ -116,6 +120,84 @@ def get_parsed_resume(
         projects=record.projects,
         certifications=record.certifications,
         parsed_at=record.parsed_at,
+    )
+
+
+@router.post(
+    "/{resume_id}/skills/extract",
+    response_model=SkillExtractionResponse,
+    status_code=200,
+)
+def extract_skills_endpoint(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = SkillExtractionService(db)
+
+    records = service.extract_and_store(current_user, resume_id)
+
+    return SkillExtractionResponse(
+        message="Skills extracted successfully.",
+        resume_id=resume_id,
+        total_skills=len(records),
+        skills=records,
+    )
+
+
+@router.get(
+    "/{resume_id}/skills",
+    response_model=SkillExtractionResponse,
+    status_code=200,
+)
+def get_extracted_skills(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = SkillExtractionService(db)
+
+    records = service.get_skills(current_user, resume_id)
+
+    return SkillExtractionResponse(
+        message="Skills retrieved successfully.",
+        resume_id=resume_id,
+        total_skills=len(records),
+        skills=records,
+    )
+
+
+@router.get(
+    "/{resume_id}/skills/summary",
+    response_model=SkillSummaryResponse,
+    status_code=200,
+)
+def get_skill_summary(
+    resume_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    service = SkillExtractionService(db)
+
+    grouped = service.get_category_summary(current_user, resume_id)
+
+    categories = [
+        SkillCategorySummary(
+            category=category,
+            skill_count=len(items),
+            skills=[item["skill"] for item in items],
+        )
+        for category, items in grouped.items()
+    ]
+
+    total_skills = sum(len(items) for items in grouped.values())
+
+    categories.sort(key=lambda c: -c.skill_count)
+
+    return SkillSummaryResponse(
+        resume_id=resume_id,
+        total_skills=total_skills,
+        categories=categories,
     )
 
 

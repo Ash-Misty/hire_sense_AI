@@ -12,6 +12,10 @@ from .resume import ResumeUploadResponse
 from .resume import ResumeListResponse
 from .parsed_resume import ResumeParseResponse
 from .parsed_resume import ParsedResumeResponse
+from .extracted_skill import ExtractedSkillResponse
+from .extracted_skill import SkillExtractionResponse
+from .extracted_skill import SkillCategorySummary
+from .extracted_skill import SkillSummaryResponse
 
 __all__ = [
     "UserRegisterRequest",
@@ -28,4 +32,8 @@ __all__ = [
     "ResumeListResponse",
     "ResumeParseResponse",
     "ParsedResumeResponse",
+    "ExtractedSkillResponse",
+    "SkillExtractionResponse",
+    "SkillCategorySummary",
+    "SkillSummaryResponse",
 ]

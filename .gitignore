@@ -1,23 +1,64 @@
+# =========================
 # Virtual Environment
+# =========================
 venv/
+.venv/
+env/
 
+# =========================
 # Python
+# =========================
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
 
+# =========================
 # Environment Variables
+# =========================
 .env
+.env.*
 
+# Keep example environment file
+!.env.example
+
+# =========================
 # Logs
+# =========================
 logs/
+*.log
 
-# Uploads
+# =========================
+# Uploaded Files
+# =========================
 uploads/
 
-# IDE
+# =========================
+# IDE / Editor
+# =========================
 .vscode/
+.idea/
 
+# =========================
 # OS
+# =========================
 .DS_Store
 Thumbs.db
+desktop.ini
+
+# =========================
+# Testing / Coverage
+# =========================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Temporary Files
+# =========================
+*.tmp
+*.temp
+
+# =========================
+# Project Notes
+# =========================
 TODO.md
