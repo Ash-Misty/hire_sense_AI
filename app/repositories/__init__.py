@@ -1,5 +1,6 @@
 from .ats_score_repository import AtsScoreRepository
 from .extracted_skill_repository import ExtractedSkillRepository
+from .interview_question_repository import InterviewQuestionRepository
 from .job_description_repository import JobDescriptionRepository
 from .job_match_repository import JobMatchRepository
 from .parsed_resume_repository import ParsedResumeRepository
@@ -16,4 +17,5 @@ __all__ = [
     "AtsScoreRepository",
     "JobDescriptionRepository",
     "JobMatchRepository",
+    "InterviewQuestionRepository",
 ]

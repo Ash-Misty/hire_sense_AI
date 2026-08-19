@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from app.api.v1.user import router as user_router
 from app.api.v1 import auth_router
-from app.api.v1 import resume_router
+from app.api.v1 import interview_router
 from app.api.v1 import job_matching_router
+from app.api.v1 import resume_router
 from app.core.config import settings
 
 app = FastAPI(
@@ -32,5 +33,9 @@ app.include_router(
 )
 app.include_router(
     job_matching_router,
+    prefix=settings.API_PREFIX,
+)
+app.include_router(
+    interview_router,
     prefix=settings.API_PREFIX,
 )

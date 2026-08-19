@@ -6,6 +6,7 @@ from .extracted_skill import ExtractedSkill
 from .ats_score import AtsScore
 from .job_description import JobDescription
 from .job_match import JobMatch
+from .interview_question import InterviewQuestion
 
 __all__ = [
     "User",
@@ -16,4 +17,5 @@ __all__ = [
     "AtsScore",
     "JobDescription",
     "JobMatch",
+    "InterviewQuestion",
 ]
