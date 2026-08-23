@@ -1,12 +1,13 @@
-from .user import User
-from .refresh_token import RefreshToken
-from .resume import Resume
-from .parsed_resume import ParsedResume
-from .extracted_skill import ExtractedSkill
+from .application import Application
 from .ats_score import AtsScore
+from .extracted_skill import ExtractedSkill
+from .interview_question import InterviewQuestion
 from .job_description import JobDescription
 from .job_match import JobMatch
-from .interview_question import InterviewQuestion
+from .parsed_resume import ParsedResume
+from .refresh_token import RefreshToken
+from .resume import Resume
+from .user import User
 
 __all__ = [
     "User",
@@ -18,4 +19,5 @@ __all__ = [
     "JobDescription",
     "JobMatch",
     "InterviewQuestion",
+    "Application",
 ]

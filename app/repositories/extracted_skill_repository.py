@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 from app.models.extracted_skill import ExtractedSkill
+from app.models.resume import Resume
 
 
 class ExtractedSkillRepository:
@@ -52,6 +53,19 @@ class ExtractedSkillRepository:
                 ExtractedSkill.normalized_skill == normalized_skill,
             )
             .first()
+        )
+
+    def get_by_user_id(self, user_id: UUID) -> list[ExtractedSkill]:
+        """
+        Retrieve all extracted skills for a given user across all their resumes.
+        """
+        return (
+            self.db.query(ExtractedSkill)
+            .filter(ExtractedSkill.resume_id.in_(
+                self.db.query(Resume.id).filter(Resume.user_id == user_id)
+            ))
+            .order_by(ExtractedSkill.count.desc(), ExtractedSkill.skill.asc())
+            .all()
         )
 
     def delete_for_resume(self, resume_id: UUID) -> None:

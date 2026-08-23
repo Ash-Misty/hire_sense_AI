@@ -10,6 +10,7 @@ class UserResponse(BaseModel):
     email: EmailStr
     is_active: bool
     is_verified: bool
+    role: str
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)

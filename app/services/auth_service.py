@@ -49,6 +49,7 @@ class AuthService:
             full_name=user_data.full_name,
             email=user_data.email,
             hashed_password=hashed_password,
+            role="candidate",
         )
 
         return self.repo.create(new_user)

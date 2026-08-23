@@ -49,6 +49,17 @@ class ParsedResumeRepository:
             .first()
         )
 
+    def get_by_user_id(self, user_id: UUID) -> list[ParsedResume]:
+        """
+        Retrieve all parsed resumes for a given user.
+        """
+        return (
+            self.db.query(ParsedResume)
+            .filter(ParsedResume.user_id == user_id)
+            .order_by(ParsedResume.parsed_at.desc())
+            .all()
+        )
+
     def delete_for_resume(self, resume_id: UUID) -> None:
         """
         Delete the parsed resume record associated with a resume.

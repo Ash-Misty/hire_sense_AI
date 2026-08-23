@@ -1,8 +1,9 @@
 from uuid import uuid4
 
-from sqlalchemy import Boolean
 from sqlalchemy import Column
 from sqlalchemy import DateTime
+from sqlalchemy import Enum
+from sqlalchemy import ForeignKey
 from sqlalchemy import String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
@@ -10,8 +11,8 @@ from sqlalchemy.sql import func
 from app.database.base import Base
 
 
-class User(Base):
-    __tablename__ = "users"
+class Application(Base):
+    __tablename__ = "applications"
 
     id = Column(
         UUID(as_uuid=True),
@@ -19,40 +20,44 @@ class User(Base):
         default=uuid4,
     )
 
-    full_name = Column(
-        String(255),
-        nullable=False,
-    )
-
-    email = Column(
-        String(255),
-        unique=True,
+    recruiter_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
         index=True,
     )
 
-    hashed_password = Column(
-        String(255),
+    job_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("job_descriptions.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
-    is_active = Column(
-        Boolean,
-        default=True,
+    candidate_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
-    is_verified = Column(
-        Boolean,
-        default=False,
+    resume_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("resumes.id", ondelete="CASCADE"),
         nullable=False,
+        index=True,
     )
 
-    role = Column(
+    status = Column(
         String(50),
         nullable=False,
-        server_default="candidate",
+        server_default="applied",
         index=True,
+    )
+
+    notes = Column(
+        String(1024),
+        nullable=True,
     )
 
     created_at = Column(

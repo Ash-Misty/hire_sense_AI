@@ -23,6 +23,17 @@ class AtsScoreRepository:
             .first()
         )
 
+    def get_by_user_id(self, user_id: UUID) -> list[AtsScore]:
+        """
+        Retrieve all ATS scores for a given user.
+        """
+        return (
+            self.db.query(AtsScore)
+            .filter(AtsScore.user_id == user_id)
+            .order_by(AtsScore.created_at.desc())
+            .all()
+        )
+
     def create(self, ats_score: AtsScore) -> AtsScore:
         """
         Save a new ATS score record.
