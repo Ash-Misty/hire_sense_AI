@@ -14,6 +14,7 @@ from app.core.security import (
     create_access_token,
     create_refresh_token,
 )
+from app.services.email_service import EmailService
 from datetime import datetime, timedelta, timezone
 
 
@@ -218,4 +219,178 @@ class AuthService:
 
         # Invalidate all sessions after a password change
         self.logout_all_sessions(user.id)
+
+    def create_verification_token(self, user_id) -> str:
+        """
+        Create a short-lived JWT for email verification.
+        """
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES
+        )
+        payload = {
+            "sub": str(user_id),
+            "type": "email_verification",
+            "exp": expire,
+        }
+        return jwt.encode(
+            payload,
+            settings.SECRET_KEY,
+            algorithm=settings.ALGORITHM,
+        )
+
+    def verify_email(self, token: str) -> User:
+        """
+        Validate the verification token and mark the user as verified.
+        """
+        try:
+            payload = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=[settings.ALGORITHM],
+            )
+        except JWTError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or expired verification token.",
+            ) from exc
+
+        token_type = payload.get("type")
+        if token_type != "email_verification":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token type.",
+            )
+
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid verification token.",
+            )
+
+        user = self.repo.get_by_id(user_id)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found.",
+            )
+
+        if user.is_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email is already verified.",
+            )
+
+        user.is_verified = True
+        self.repo.update(user)
+
+        return user
+
+    def resend_verification_email(self, email: str) -> None:
+        """
+        Generate a new verification token and send it to the user.
+        """
+        user = self.repo.get_by_email(email)
+        if user is None:
+            return
+
+        if user.is_verified:
+            return
+
+        token = self.create_verification_token(user.id)
+
+        verification_url = (
+            f"http://localhost:8000/api/v1/auth/verify-email?token={token}"
+        )
+
+        EmailService().send_verification_email(
+            to_email=user.email,
+            name=user.full_name,
+            verification_url=verification_url,
+            expire_minutes=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES,
+        )
+
+    def create_password_reset_token(self, user_id) -> str:
+        """
+        Create a short-lived JWT for password reset.
+        """
+        expire = datetime.now(timezone.utc) + timedelta(
+            minutes=settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES
+        )
+        payload = {
+            "sub": str(user_id),
+            "type": "password_reset",
+            "exp": expire,
+        }
+        return jwt.encode(
+            payload,
+            settings.SECRET_KEY,
+            algorithm=settings.ALGORITHM,
+        )
+
+    def reset_password(self, token: str, new_password: str) -> User:
+        """
+        Validate the reset token and update the user's password.
+        """
+        try:
+            payload = jwt.decode(
+                token,
+                settings.SECRET_KEY,
+                algorithms=[settings.ALGORITHM],
+            )
+        except JWTError as exc:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid or expired reset token.",
+            ) from exc
+
+        token_type = payload.get("type")
+        if token_type != "password_reset":
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid token type.",
+            )
+
+        user_id = payload.get("sub")
+        if user_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid reset token.",
+            )
+
+        user = self.repo.get_by_id(user_id)
+        if user is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found.",
+            )
+
+        user.hashed_password = hash_password(new_password)
+        self.repo.update(user)
+
+        # Invalidate all sessions after password reset
+        self.logout_all_sessions(user.id)
+
+        return user
+
+    def request_password_reset(self, email: str) -> None:
+        """
+        Generate a password reset token and send it to the user.
+        """
+        user = self.repo.get_by_email(email)
+        if user is None:
+            return
+
+        token = self.create_password_reset_token(user.id)
+
+        reset_url = (
+            f"http://localhost:3000/reset-password?token={token}"
+        )
+
+        EmailService().send_password_reset_email(
+            to_email=user.email,
+            name=user.full_name,
+            reset_url=reset_url,
+            expire_minutes=settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES,
+        )
     

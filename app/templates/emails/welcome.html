@@ -1,0 +1,20 @@
+{% extends "emails/base.html" %}
+
+{% block title %}Welcome to HireSense AI{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ name }}!</h2>
+    <p>Thank you for registering with HireSense AI. We're excited to help you advance your career with AI-powered resume analysis, job matching, and interview preparation.</p>
+    <p>Here's what you can do next:</p>
+    <ul>
+        <li>Upload your resume</li>
+        <li>Get AI-powered resume parsing and skill extraction</li>
+        <li>Analyze your resume with our ATS scoring engine</li>
+        <li>Match your resume against job descriptions</li>
+        <li>Generate personalized interview questions</li>
+    </ul>
+    <p>
+        <a href="{{ frontend_url }}/login" class="button">Get Started</a>
+    </p>
+    <p>If you have any questions, feel free to reach out to our support team.</p>
+{% endblock %}
