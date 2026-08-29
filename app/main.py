@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi import Response
 from app.api.v1.user import router as user_router
 from app.api.v1 import auth_router
 from app.api.v1 import candidate_router
@@ -19,6 +20,11 @@ def root():
     return {
         "message": "Welcome to HireSense AI"
     }
+
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
 
 
 app.include_router(
