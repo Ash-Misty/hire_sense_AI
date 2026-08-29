@@ -147,18 +147,20 @@ def resend_verification(
     db: Session = Depends(get_db),
 ):
     service = AuthService(db)
+    user = service.repo.get_by_email(request.email)
 
-    background_tasks.add_task(
-        EmailService().send_verification_email,
-        to_email=request.email,
-        name="User",
-        verification_url="",
-        expire_minutes=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES,
-    )
+    if user is not None and not user.is_verified:
+        token = service.create_verification_token(user.id)
+        verification_url = (
+            f"http://localhost:8000/api/v1/auth/verify-email?token={token}"
+        )
 
-    if service.repo.get_by_email(request.email) is None:
-        return VerificationResponse(
-            message="If an account with that email exists, a verification email has been sent.",
+        background_tasks.add_task(
+            EmailService().send_verification_email,
+            to_email=user.email,
+            name=user.full_name,
+            verification_url=verification_url,
+            expire_minutes=settings.EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES,
         )
 
     return VerificationResponse(
@@ -176,14 +178,21 @@ def forgot_password(
     db: Session = Depends(get_db),
 ):
     service = AuthService(db)
+    user = service.repo.get_by_email(request.email)
 
-    background_tasks.add_task(
-        EmailService().send_password_reset_email,
-        to_email=request.email,
-        name="User",
-        reset_url="",
-        expire_minutes=settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES,
-    )
+    if user is not None:
+        token = service.create_password_reset_token(user.id)
+        reset_url = (
+            f"http://localhost:3000/reset-password?token={token}"
+        )
+
+        background_tasks.add_task(
+            EmailService().send_password_reset_email,
+            to_email=user.email,
+            name=user.full_name,
+            reset_url=reset_url,
+            expire_minutes=settings.PASSWORD_RESET_TOKEN_EXPIRE_MINUTES,
+        )
 
     return VerificationResponse(
         message="If an account with that email exists, a password reset link has been sent.",
